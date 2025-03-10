@@ -1,0 +1,56 @@
+import Autograph
+import SwiftUI
+import SVGView
+import SwiftUIIntrospect
+
+struct DrawingFragment: View {
+    @ObservedObject private var fragmentModel: DrawingFragmentModel
+    
+    public init(model: DrawingFragmentModel) {
+        self._fragmentModel = ObservedObject(wrappedValue: model)
+    }
+    
+    internal var didEndStroking: (() -> Void)?
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            
+            GeometryReader { geo in
+                Autograph($fragmentModel.strokes, isActive: self.$fragmentModel.isActive)
+                    .background(.white)
+                    .onAppear {
+                        fragmentModel.canvaSize = geo.size
+                    }
+                    .onChange(of: geo.size) { newSize in
+                        fragmentModel.canvaSize = newSize
+                    }
+                    .onChange(of: fragmentModel.isActive) { isNowActive in
+                        self.fragmentModel.pushNotification()
+                        
+                        if !isNowActive {
+                            self.didEndStroking?()
+                        }
+                    }
+                    .onChange(of: fragmentModel.strokes.count) { _ in
+                        self.fragmentModel.pushNotification()
+                    }
+            }
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitle("Canvas Classifier")
+    }
+
+}
+
+
+extension DrawingFragment {
+    public func onStrokeDrawingEnded(_ action: @escaping () -> Void) -> Self {
+        var copy = self
+        copy.didEndStroking = action
+        return copy
+    }
+}
+
+#Preview {
+    DrawingFragment(model: .init(mediator: .init()))
+}

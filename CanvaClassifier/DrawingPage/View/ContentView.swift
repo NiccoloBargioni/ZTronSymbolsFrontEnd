@@ -22,7 +22,16 @@ public struct ContentView: View {
                     HStack(alignment: .center, spacing: 18) {
                         if self.suggestionsModel.suggestions.count > 0 {
                             ForEach(self.suggestionsModel.suggestions) { suggestion in
-                                Text("Result: \(suggestion.identifier.rawValue), score: \(suggestion.score, specifier: "%.2f")")
+                                VStack(alignment: .center, spacing: 18) {
+                                    Image("SSRC_\(suggestion.identifier.rawValue)")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(maxWidth: 55.0)
+                                    
+                                    Text("\(suggestion.score, specifier: "%.2f")")
+                                        .font(.footnote.weight(.semibold))
+                                }
+                                .frame(maxWidth: .infinity)
                             }
                         }
                     }

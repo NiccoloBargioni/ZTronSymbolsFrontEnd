@@ -1,20 +1,36 @@
 import UIKit
 import Autograph
 import SwiftUI
+import ZTronObservation
 
-public final class AutographViewController: UIViewController {
-        
-    private var hostedController: UIHostingController<DrawingFragment> = {
-        return UIHostingController<DrawingFragment>(
-            rootView: DrawingFragment()
+public final class AutographViewController: UIViewController, Component {
+    public var id: String = "Autograph ViewController"
+    
+    @InteractionsManaging(setupOr: .replace, detachOr: .fail) private var interactionsManager: (any MSAInteractionsManager)? = nil
+    internal let mediator: MSAMediator
+    
+    private var hostedController: UIHostingController<DrawingFragment>
+    
+    public init(mediator: MSAMediator, fragmentModel: DrawingFragmentModel, suggestionsModel: SuggestionsModel) {
+        self.hostedController = UIHostingController<DrawingFragment>(
+            rootView: DrawingFragment(model: fragmentModel)
         )
-    }()
+        
+        self.mediator = mediator
+        super.init(nibName: nil, bundle: nil)
+        self.interactionsManager = AutographViewModel(owner: self, mediator: self.mediator)
+
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
         
         self.hostedController.rootView.didEndStroking = {
-            self.save()
+            // self.save()
         }
         
         self.view.addSubview(self.hostedController.view)
@@ -66,4 +82,22 @@ public final class AutographViewController: UIViewController {
             }
         }
     }
+    
+    public func getDelegate() -> (any ZTronObservation.InteractionsManager)? {
+        return self.interactionsManager
+    }
+
+    public func setDelegate(_ interactionsManager: (any ZTronObservation.InteractionsManager)?) {
+        guard let manager = interactionsManager as? any MSAInteractionsManager else {
+            if interactionsManager != nil {
+                fatalError("Expected interactions manager of type \(String(describing: MSAInteractionsManager.self))")
+            } else {
+                self.interactionsManager = nil
+                return
+            }
+        }
+        
+        self.interactionsManager = manager
+    }
+
 }

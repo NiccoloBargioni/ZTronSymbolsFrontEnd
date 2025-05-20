@@ -6,6 +6,14 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		84459A032DDCBAB400073761 /* ZTronObservation in Frameworks */ = {isa = PBXBuildFile; productRef = 84459A022DDCBAB400073761 /* ZTronObservation */; };
+		84459A062DDCBAF600073761 /* Autograph in Frameworks */ = {isa = PBXBuildFile; productRef = 84459A052DDCBAF600073761 /* Autograph */; };
+		84459A092DDCBB1D00073761 /* SVGView in Frameworks */ = {isa = PBXBuildFile; productRef = 84459A082DDCBB1D00073761 /* SVGView */; };
+		84459A0C2DDCBB3B00073761 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = 84459A0B2DDCBB3B00073761 /* SwiftUIIntrospect */; };
+		84459A0F2DDCBB6100073761 /* ZTronSymbolsClassifier in Frameworks */ = {isa = PBXBuildFile; productRef = 84459A0E2DDCBB6100073761 /* ZTronSymbolsClassifier */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		84A4EEE22D3FFC5E00DB6C25 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +60,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84459A092DDCBB1D00073761 /* SVGView in Frameworks */,
+				84459A062DDCBAF600073761 /* Autograph in Frameworks */,
+				84459A032DDCBAB400073761 /* ZTronObservation in Frameworks */,
+				84459A0C2DDCBB3B00073761 /* SwiftUIIntrospect in Frameworks */,
+				84459A0F2DDCBB6100073761 /* ZTronSymbolsClassifier in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +125,11 @@
 			);
 			name = CanvaClassifier;
 			packageProductDependencies = (
+				84459A022DDCBAB400073761 /* ZTronObservation */,
+				84459A052DDCBAF600073761 /* Autograph */,
+				84459A082DDCBB1D00073761 /* SVGView */,
+				84459A0B2DDCBB3B00073761 /* SwiftUIIntrospect */,
+				84459A0E2DDCBB6100073761 /* ZTronSymbolsClassifier */,
 			);
 			productName = CanvaClassifier;
 			productReference = 84A4EED12D3FFC5D00DB6C25 /* CanvaClassifier.app */;
@@ -195,6 +213,13 @@
 			);
 			mainGroup = 84A4EEC82D3FFC5D00DB6C25;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				84459A012DDCBAB400073761 /* XCRemoteSwiftPackageReference "ZTronObservation" */,
+				84459A042DDCBAF600073761 /* XCRemoteSwiftPackageReference "swift-ui-autograph" */,
+				84459A072DDCBB1D00073761 /* XCRemoteSwiftPackageReference "SVGView" */,
+				84459A0A2DDCBB3B00073761 /* XCRemoteSwiftPackageReference "swiftui-introspect" */,
+				84459A0D2DDCBB6100073761 /* XCRemoteSwiftPackageReference "ZTronSymbolsClassifer" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 84A4EED22D3FFC5D00DB6C25 /* Products */;
 			projectDirPath = "";
@@ -558,6 +583,77 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		84459A012DDCBAB400073761 /* XCRemoteSwiftPackageReference "ZTronObservation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/NiccoloBargioni/ZTronObservation";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		84459A042DDCBAF600073761 /* XCRemoteSwiftPackageReference "swift-ui-autograph" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/NickTheFreak97/swift-ui-autograph";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		84459A072DDCBB1D00073761 /* XCRemoteSwiftPackageReference "SVGView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/exyte/SVGView";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		84459A0A2DDCBB3B00073761 /* XCRemoteSwiftPackageReference "swiftui-introspect" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/siteline/swiftui-introspect";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		84459A0D2DDCBB6100073761 /* XCRemoteSwiftPackageReference "ZTronSymbolsClassifer" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/NiccoloBargioni/ZTronSymbolsClassifer";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		84459A022DDCBAB400073761 /* ZTronObservation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 84459A012DDCBAB400073761 /* XCRemoteSwiftPackageReference "ZTronObservation" */;
+			productName = ZTronObservation;
+		};
+		84459A052DDCBAF600073761 /* Autograph */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 84459A042DDCBAF600073761 /* XCRemoteSwiftPackageReference "swift-ui-autograph" */;
+			productName = Autograph;
+		};
+		84459A082DDCBB1D00073761 /* SVGView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 84459A072DDCBB1D00073761 /* XCRemoteSwiftPackageReference "SVGView" */;
+			productName = SVGView;
+		};
+		84459A0B2DDCBB3B00073761 /* SwiftUIIntrospect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 84459A0A2DDCBB3B00073761 /* XCRemoteSwiftPackageReference "swiftui-introspect" */;
+			productName = SwiftUIIntrospect;
+		};
+		84459A0E2DDCBB6100073761 /* ZTronSymbolsClassifier */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 84459A0D2DDCBB6100073761 /* XCRemoteSwiftPackageReference "ZTronSymbolsClassifer" */;
+			productName = ZTronSymbolsClassifier;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 84A4EEC92D3FFC5D00DB6C25 /* Project object */;
 }

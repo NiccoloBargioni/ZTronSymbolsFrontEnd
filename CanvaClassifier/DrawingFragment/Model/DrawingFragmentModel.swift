@@ -1,5 +1,6 @@
 import Foundation
 import ZTronObservation
+import ZTronSymbolsClassifier
 
 public final class DrawingFragmentModel: ObservableObject, Component {
     public var id: String = "Drawing Fragment Model"
@@ -8,6 +9,10 @@ public final class DrawingFragmentModel: ObservableObject, Component {
     @Published internal var strokes: [[CGPoint]] = .init()
     @Published internal var canvaSize: CGSize = .zero
     @Published internal var isActive: Bool = false
+    
+    @Published internal var lastAction: FragmentLastAction = .ready
+    
+    private let classifier = Classifier<Alphabet>(samplelimit: Int.max - 1)
 
     public init(mediator: MSAMediator) {
         self.delegate = DrawingFragmentDelegate(mediator: mediator, owner: self)
@@ -53,4 +58,11 @@ public final class DrawingFragmentModel: ObservableObject, Component {
             self.strokes = self.strokes.dropLast()
         }
     }
+}
+
+internal enum FragmentLastAction {
+    case ready
+    case stroking
+    case strokingEnded
+    case countChanged
 }

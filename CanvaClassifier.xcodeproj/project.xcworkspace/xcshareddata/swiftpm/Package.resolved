@@ -1,0 +1,69 @@
+{
+  "originHash" : "f5ff642ac2d0f28482a1a84d47d5576296a4e72b8f0f208f83e1c55f0827f192",
+  "pins" : [
+    {
+      "identity" : "svgview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/exyte/SVGView",
+      "state" : {
+        "branch" : "main",
+        "revision" : "86f6d742cccf5b64844b303d80ed1f75d02fbcce"
+      }
+    },
+    {
+      "identity" : "swift-ui-autograph",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/NickTheFreak97/swift-ui-autograph",
+      "state" : {
+        "branch" : "main",
+        "revision" : "e4e3386092ad6b9d3591f7e180ed3b276d87e88c"
+      }
+    },
+    {
+      "identity" : "swift-ui-helpers",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jensmoes/swift-ui-helpers",
+      "state" : {
+        "revision" : "7edab92c52747c0cc4ed1d52c2e46f2a77f9d045",
+        "version" : "0.0.3"
+      }
+    },
+    {
+      "identity" : "swiftgraph",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/NickTheFreak97/SwiftGraph",
+      "state" : {
+        "branch" : "msa",
+        "revision" : "615085465d81f7a7ff176f13029b19f873773409"
+      }
+    },
+    {
+      "identity" : "swiftui-introspect",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/siteline/swiftui-introspect",
+      "state" : {
+        "branch" : "main",
+        "revision" : "807f73ce09a9b9723f12385e592b4e0aaebd3336"
+      }
+    },
+    {
+      "identity" : "ztronobservation",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/NiccoloBargioni/ZTronObservation",
+      "state" : {
+        "branch" : "main",
+        "revision" : "9c7567739bb8979b73e0d9416e30fd5f88e0450b"
+      }
+    },
+    {
+      "identity" : "ztronsymbolsclassifer",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/NiccoloBargioni/ZTronSymbolsClassifer",
+      "state" : {
+        "branch" : "main",
+        "revision" : "e15be46acb218541d8cd9ead5cd3759b8b533a1f"
+      }
+    }
+  ],
+  "version" : 3
+}

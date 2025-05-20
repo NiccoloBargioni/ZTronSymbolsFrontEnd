@@ -1,5 +1,6 @@
 import SwiftUI
 import ZTronObservation
+import ZTronSymbolsClassifier
 
 public struct ContentView: View {
     private var mediator: MSAMediator = .init()
@@ -17,6 +18,16 @@ public struct ContentView: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             AutographView(mediator: self.mediator, fragmentModel: self.fragmentModel, suggestionsModel: self.suggestionsModel)
+                .overlay(alignment: .bottom) {
+                    HStack(alignment: .center, spacing: 18) {
+                        if self.suggestionsModel.suggestions.count > 0 {
+                            ForEach(self.suggestionsModel.suggestions) { suggestion in
+                                Text("Result: \(suggestion.identifier.rawValue), score: \(suggestion.score, specifier: "%.2f")")
+                            }
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                }
             
             HStack(alignment: .center, spacing: 0) {
                 Button {
@@ -46,6 +57,9 @@ public struct ContentView: View {
             }
             .tint(.primary)
         }
+        .task {
+            self.suggestionsModel.setDelegate(SuggestionInteractionsManager(owner: self.suggestionsModel, mediator: self.mediator))
+        }
     }
 }
 
@@ -70,5 +84,12 @@ public struct AutographView: UIViewControllerRepresentable {
     
     public func updateUIViewController(_ uiViewController: AutographViewController, context: Context) {
         
+    }
+}
+
+
+extension Score: Identifiable {
+    public var id: ID {
+        return self.identifier
     }
 }

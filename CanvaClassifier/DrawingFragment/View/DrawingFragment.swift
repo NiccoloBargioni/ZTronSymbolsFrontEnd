@@ -29,6 +29,14 @@ struct DrawingFragment: View {
                         
                         if !isNowActive {
                             self.didEndStroking?()
+                            
+                            for stroke in self.fragmentModel.strokes {
+                                print("[")
+                                for point in stroke {
+                                    print("(x: \(point.x), y: \(point.y)),")
+                                }
+                                print("]")
+                            }
                         }
                     }
                     .onChange(of: fragmentModel.strokes.count) { _ in

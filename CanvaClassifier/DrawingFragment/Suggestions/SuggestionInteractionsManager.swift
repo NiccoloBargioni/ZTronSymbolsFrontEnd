@@ -26,8 +26,14 @@ public final class SuggestionInteractionsManager: MSAInteractionsManager, @unche
         guard let owner = self.owner else { return }
         
         if let fragmentModel = args.getSource() as? DrawingFragmentModel {
-            if fragmentModel.lastAction == .strokingEnded {
-                owner.updateSuggestions(for: fragmentModel.strokes)
+            let shouldUpdate = fragmentModel.strokes.reduce(true) { shouldUpdate, nextStroke in
+                return shouldUpdate && nextStroke.count > 1
+            }
+            
+            if shouldUpdate {
+                Task(priority: .medium) {
+                    owner.updateSuggestions(for: fragmentModel.strokes)
+                }
             }
         }
     }

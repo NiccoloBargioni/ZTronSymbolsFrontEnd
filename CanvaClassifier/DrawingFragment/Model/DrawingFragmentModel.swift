@@ -52,6 +52,8 @@ public final class DrawingFragmentModel: ObservableObject, Component {
     }
     
     
+    
+    
     public final func undoLastStroke() -> Void {
         if self.strokes.count > 0 {
             self.strokes[self.strokes.count - 1].removeAll()

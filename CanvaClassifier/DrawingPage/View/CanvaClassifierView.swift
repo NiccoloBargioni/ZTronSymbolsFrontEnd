@@ -13,8 +13,10 @@ public struct CanvaClassifierView<
     
     @State private var suggestions: [Score<S.H>] = []
     private var viewForSuggestion: ((Score<S.H>) -> V)? = nil
+    private var onSuggestionAcceptedAction: ((Score<S.H>) -> Void)? = nil
     
     private let trainingSet: [S.H: [Strokes]]
+    private var shouldClearOnSuggestionAccepted: Bool = false
 
     public init(
         trainingSet: [S.H: [Strokes]],
@@ -43,11 +45,20 @@ public struct CanvaClassifierView<
                         ForEach(
                             self.suggestions, id: \.self
                         ) { suggestion in
-                            if let viewForSuggestion = viewForSuggestion {
-                                viewForSuggestion(suggestion)
-                            } else {
-                                Text("\(String(describing: suggestion.id))")
+                            Button {
+                                self.onSuggestionAcceptedAction?(suggestion)
+                                
+                                if self.shouldClearOnSuggestionAccepted {
+                                    self.pageModel.sendClear()
+                                }
+                            } label: {
+                                if let viewForSuggestion = viewForSuggestion {
+                                    viewForSuggestion(suggestion)
+                                } else {
+                                    Text("\(String(describing: suggestion.id))")
+                                }
                             }
+                            .tint(.primary)
                         }
                     }
                 }
@@ -90,6 +101,18 @@ public struct CanvaClassifierView<
                 }
             }
         }
+    }
+    
+    public func onSuggestionAccepted(_ action: @escaping (Score<S.H>) -> Void) -> Self {
+        var copy = self
+        copy.onSuggestionAcceptedAction = action
+        return copy
+    }
+    
+    public func clearOnSuggestionAccepted(_ shouldClear: Bool = true) -> Self {
+        var copy = self
+        copy.shouldClearOnSuggestionAccepted = shouldClear
+        return copy
     }
 }
 

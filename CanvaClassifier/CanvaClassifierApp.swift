@@ -9,6 +9,10 @@ struct CanvaClassifierApp: App {
             } viewForSuggestion: { score in
                 Text("\(score.identifier.rawValue)")
             }
+            .onSuggestionAccepted { score in
+                print("Accepted suggestion \(score)")
+            }
+            .clearOnSuggestionAccepted()
         }
     }
 }

@@ -1,17 +1,14 @@
-//
-//  CanvaClassifierApp.swift
-//  CanvaClassifier
-//
-//  Created by Niccolo Della Rocca on 21/01/25.
-//
-
 import SwiftUI
 
 @main
 struct CanvaClassifierApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            CanvaClassifierView { mediator in
+                return SuggestionsModel<Alphabet>(mediator: mediator)
+            } viewForSuggestion: { score in
+                Text("\(score.identifier.rawValue)")
+            }
         }
     }
 }

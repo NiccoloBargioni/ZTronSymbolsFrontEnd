@@ -2,10 +2,10 @@ import Foundation
 import ZTronObservation
 
 public final class SuggestionInteractionsManager: MSAInteractionsManager, @unchecked Sendable {
-    weak private var owner: SuggestionsModel?
+    weak private var owner: (any AnySuggestionModel)?
     weak private var mediator: MSAMediator?
     
-    public init(owner: SuggestionsModel, mediator: MSAMediator) {
+    public init(owner: any AnySuggestionModel, mediator: MSAMediator) {
         self.owner = owner
         self.mediator = mediator
     }

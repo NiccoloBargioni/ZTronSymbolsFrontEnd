@@ -3,7 +3,7 @@ import SwiftUI
 import SVGView
 import SwiftUIIntrospect
 
-struct DrawingFragment: View {
+public struct DrawingFragment: View {
     @ObservedObject private var fragmentModel: DrawingFragmentModel
     
     public init(model: DrawingFragmentModel) {
@@ -11,13 +11,18 @@ struct DrawingFragment: View {
     }
     
     internal var didEndStroking: (() -> Void)?
+    private var backgroundColor: Color = Color(UIColor.systemBackground)
     
-    var body: some View {
+    public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             
             GeometryReader { geo in
-                Autograph($fragmentModel.strokes, isActive: self.$fragmentModel.isActive)
-                    .background(Color(UIColor.systemBackground))
+                Autograph(
+                    $fragmentModel.strokes,
+                    isActive: self.$fragmentModel.isActive,
+                    strokeColor: Color.primary
+                )
+                    .background(self.backgroundColor)
                     .onAppear {
                         fragmentModel.canvaSize = geo.size
                     }
@@ -48,6 +53,7 @@ struct DrawingFragment: View {
         .navigationBarTitle("Canvas Classifier")
     }
 
+    
 }
 
 
@@ -55,6 +61,12 @@ extension DrawingFragment {
     public func onStrokeDrawingEnded(_ action: @escaping () -> Void) -> Self {
         var copy = self
         copy.didEndStroking = action
+        return copy
+    }
+    
+    public func backgroundColor(_ color: Color) -> Self {
+        var copy = self
+        copy.backgroundColor = color
         return copy
     }
 }

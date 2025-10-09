@@ -2,22 +2,16 @@ import Foundation
 import ZTronSymbolsClassifier
 import ZTronObservation
 
-public final class SuggestionsModel: ObservableObject, Component {
+public final class SuggestionsModel<H: Hashable>: ObservableObject, AnySuggestionModel {
+    
     public var id: String = "suggestions model"
-    @Published internal var suggestions: [Score<Alphabet>] = .init()
-    private let classifier = Classifier<Alphabet>(samplelimit: Int.max - 1)
+    @Published internal var suggestions: [Score<H>] = .init()
+    private let classifier = Classifier<H>(samplelimit: Int.max - 1)
     @InteractionsManaging(setupOr: .ignore, detachOr: .ignore) private var delegate: (any MSAInteractionsManager)? = nil
     
     
     public init(mediator: MSAMediator) {
         self.delegate = SuggestionInteractionsManager(owner: self, mediator: mediator)
-        
-        for symbol in alphabetTrainingSet.keys {
-            for strokes in alphabetTrainingSet[symbol]! {
-                self.classifier.train(identifier: symbol, sample: StrokeSample(strokes: strokes.sanitize()))
-            }
-        }
-
     }
     
     public func setDelegate(_ interactionsManager: (any ZTronObservation.InteractionsManager)?) {
@@ -47,13 +41,27 @@ public final class SuggestionsModel: ObservableObject, Component {
 
     public func updateSuggestions(for test: Strokes) {
         guard test.count > 0 else {
-            self.suggestions = []
+            Task(priority: .userInitiated) { @MainActor in
+                self.suggestions = []
+            }
             return
         }
         
-        let newSuggestions = self.classifier.classify(sampleType: StrokeSample.self, unknown: StrokeSample(strokes: test.sanitize()))
+        let newSuggestions = self.classifier.classify(
+            sampleType: StrokeSample.self,
+            unknown: StrokeSample(strokes: test.sanitize())
+        )
+        
         Task(priority: .userInitiated) { @MainActor in
             self.suggestions = newSuggestions
         }
+    }
+    
+    public final func addTrainingPoint(example: Strokes, class: H) {
+        self.classifier.train(identifier: `class`, sample: StrokeSample(strokes: example.sanitize()))
+    }
+    
+    public final func getSuggestions() -> [Score<H>] {
+        return self.suggestions
     }
 }

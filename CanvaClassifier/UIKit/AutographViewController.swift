@@ -3,7 +3,7 @@ import Autograph
 import SwiftUI
 import ZTronObservation
 
-public final class AutographViewController: UIViewController, Component {
+public final class AutographViewController<S: AnySuggestionModel & ObservableObject>: UIViewController, Component {
     public var id: String = "Autograph ViewController"
     
     @InteractionsManaging(setupOr: .replace, detachOr: .fail) private var interactionsManager: (any MSAInteractionsManager)? = nil
@@ -11,7 +11,11 @@ public final class AutographViewController: UIViewController, Component {
     
     private var hostedController: UIHostingController<DrawingFragment>
     
-    public init(mediator: MSAMediator, fragmentModel: DrawingFragmentModel, suggestionsModel: SuggestionsModel) {
+    public init(
+        mediator: MSAMediator,
+        fragmentModel: DrawingFragmentModel,
+        suggestionsModel: S
+    ) {
         self.hostedController = UIHostingController<DrawingFragment>(
             rootView: DrawingFragment(model: fragmentModel)
         )

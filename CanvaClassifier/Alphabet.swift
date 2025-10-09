@@ -1,6 +1,5 @@
 import Foundation
 
-
 public enum Alphabet: String, Hashable {
     case A = "A"
     case B = "B"

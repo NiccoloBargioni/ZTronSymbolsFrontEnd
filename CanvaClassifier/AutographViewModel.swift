@@ -1,11 +1,11 @@
 import Foundation
 import ZTronObservation
 
-public class AutographViewModel: MSAInteractionsManager, @unchecked Sendable {
+public class AutographViewModel<S: AnySuggestionModel & ObservableObject>: MSAInteractionsManager, @unchecked Sendable {
     weak private var mediator: MSAMediator? = nil
-    weak private var owner: AutographViewController? = nil
+    weak private var owner: AutographViewController<S>? = nil
     
-    public init(owner: AutographViewController, mediator: MSAMediator) {
+    public init(owner: AutographViewController<S>, mediator: MSAMediator) {
         self.owner = owner
         self.mediator = mediator
     }

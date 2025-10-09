@@ -2,7 +2,6 @@ import Foundation
 import ZTronSymbolsClassifier
 import ZTronObservation
 
-
 public final class SuggestionsModel: ObservableObject, Component {
     public var id: String = "suggestions model"
     @Published internal var suggestions: [Score<Alphabet>] = .init()
@@ -52,6 +51,9 @@ public final class SuggestionsModel: ObservableObject, Component {
             return
         }
         
-        self.suggestions = self.classifier.classify(sampleType: StrokeSample.self, unknown: StrokeSample(strokes: test.sanitize()))
+        let newSuggestions = self.classifier.classify(sampleType: StrokeSample.self, unknown: StrokeSample(strokes: test.sanitize()))
+        Task(priority: .userInitiated) { @MainActor in
+            self.suggestions = newSuggestions
+        }
     }
 }

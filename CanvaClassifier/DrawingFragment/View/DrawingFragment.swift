@@ -17,7 +17,7 @@ struct DrawingFragment: View {
             
             GeometryReader { geo in
                 Autograph($fragmentModel.strokes, isActive: self.$fragmentModel.isActive)
-                    .background(.white)
+                    .background(Color(UIColor.systemBackground))
                     .onAppear {
                         fragmentModel.canvaSize = geo.size
                     }

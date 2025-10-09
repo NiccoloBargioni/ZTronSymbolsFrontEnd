@@ -30,6 +30,7 @@ public struct DrawingFragment: View {
                         fragmentModel.canvaSize = newSize
                     }
                     .onChange(of: fragmentModel.isActive) { isNowActive in
+                        self.fragmentModel.lastAction = isNowActive ? .stroking : .strokingEnded
                         self.fragmentModel.pushNotification()
                         
                         if !isNowActive {
@@ -45,6 +46,7 @@ public struct DrawingFragment: View {
                         }
                     }
                     .onChange(of: fragmentModel.strokes.count) { _ in
+                        self.fragmentModel.lastAction = .countChanged
                         self.fragmentModel.pushNotification()
                     }
             }

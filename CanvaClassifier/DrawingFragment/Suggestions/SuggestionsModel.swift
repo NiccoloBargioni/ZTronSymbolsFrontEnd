@@ -3,14 +3,23 @@ import ZTronSymbolsClassifier
 import ZTronObservation
 
 public final class SuggestionsModel<H: Hashable>: ObservableObject, AnySuggestionModel {
-    
     public var id: String = "suggestions model"
     @Published internal var suggestions: [Score<H>] = .init()
     private let classifier = Classifier<H>(samplelimit: Int.max - 1)
     @InteractionsManaging(setupOr: .ignore, detachOr: .ignore) private var delegate: (any MSAInteractionsManager)? = nil
     
+    private let shouldAutoassignToMostLikely: Bool
+    private let timeBeforeAutoassign: DispatchTimeInterval
+    private var autoassignWorkItem: DispatchWorkItem? = nil
+    private var onSuggestionAcceptedAction: ((Score<H>) -> Void)? = nil
     
-    public init(mediator: MSAMediator) {
+    public init(
+        mediator: MSAMediator,
+        autoAssignToMostLikely: Bool = false,
+        timeBeforeAutoassign: DispatchTimeInterval = .seconds(2)
+    ) {
+        self.shouldAutoassignToMostLikely = autoAssignToMostLikely
+        self.timeBeforeAutoassign = timeBeforeAutoassign
         self.delegate = SuggestionInteractionsManager(owner: self, mediator: mediator)
     }
     
@@ -39,7 +48,12 @@ public final class SuggestionsModel<H: Hashable>: ObservableObject, AnySuggestio
         hasher.combine(self.id)
     }
 
-    public func updateSuggestions(for test: Strokes) {
+    public func updateSuggestions(
+        for test: Strokes,
+        completion: (() -> Void)?
+    ) {
+        self.autoassignWorkItem?.cancel()
+        
         guard test.count > 0 else {
             Task(priority: .userInitiated) { @MainActor in
                 self.suggestions = []
@@ -54,6 +68,8 @@ public final class SuggestionsModel<H: Hashable>: ObservableObject, AnySuggestio
         
         Task(priority: .userInitiated) { @MainActor in
             self.suggestions = newSuggestions
+            
+            completion?()
         }
     }
     
@@ -64,4 +80,25 @@ public final class SuggestionsModel<H: Hashable>: ObservableObject, AnySuggestio
     public final func getSuggestions() -> [Score<H>] {
         return self.suggestions
     }
+    
+    public final func onStrokeEnded() {
+        guard self.shouldAutoassignToMostLikely else { return }
+        guard let mostLikelySymbol = self.suggestions.first else { return }
+        
+        self.autoassignWorkItem?.cancel()
+        
+        self.autoassignWorkItem = DispatchWorkItem {
+            self.onSuggestionAcceptedAction?(mostLikelySymbol)
+        }
+
+        DispatchQueue.main.asyncAfter(
+            deadline: .now() + self.timeBeforeAutoassign,
+            execute: self.autoassignWorkItem!
+        )
+    }
+    
+    public func onSuggestionAccepted(_ action: ((Score<H>) -> Void)?) {
+        self.onSuggestionAcceptedAction = action
+    }
+
 }

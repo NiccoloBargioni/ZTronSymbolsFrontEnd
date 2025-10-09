@@ -90,6 +90,10 @@ public struct CanvaClassifierView<
         }
         .task {
             self.suggestionsModel.setDelegate(SuggestionInteractionsManager(owner: self.suggestionsModel, mediator: self.mediator))
+            
+            self.suggestionsModel.onSuggestionAccepted { score in
+                self.onSuggestionAcceptedAction?(score)
+            }
         }
         .task {
             for symbol in self.trainingSet.keys {

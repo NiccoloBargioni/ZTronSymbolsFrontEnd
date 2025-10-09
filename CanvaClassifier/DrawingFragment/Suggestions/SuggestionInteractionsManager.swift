@@ -23,18 +23,8 @@ public final class SuggestionInteractionsManager: MSAInteractionsManager, @unche
     }
     
     public func notify(args: ZTronObservation.BroadcastArgs) {
-        guard let owner = self.owner else { return }
-        
         if let fragmentModel = args.getSource() as? DrawingFragmentModel {
-            let shouldUpdate = fragmentModel.strokes.reduce(true) { shouldUpdate, nextStroke in
-                return shouldUpdate && nextStroke.count > 1
-            }
-            
-            if shouldUpdate {
-                Task(priority: .medium) {
-                    owner.updateSuggestions(for: fragmentModel.strokes)
-                }
-            }
+            self.updateIfNeeded(from: fragmentModel)
         }
     }
     
@@ -48,5 +38,23 @@ public final class SuggestionInteractionsManager: MSAInteractionsManager, @unche
     
     public func getMediator() -> (any ZTronObservation.Mediator)? {
         return self.mediator
+    }
+    
+    private final func updateIfNeeded(from fragmentModel: DrawingFragmentModel) -> Void {
+        guard let owner = self.owner else { return }
+        guard fragmentModel.lastAction != .ready else { return }
+        
+        let shouldUpdate = fragmentModel.strokes.reduce(true) { shouldUpdate, nextStroke in
+            return shouldUpdate && nextStroke.count > 1
+        }
+        
+        if shouldUpdate {
+            Task(priority: .medium) {
+                owner.updateSuggestions(for: fragmentModel.strokes) {
+                    guard fragmentModel.lastAction == .strokingEnded else { return }
+                    owner.onStrokeEnded()
+                }
+            }
+        }
     }
 }

@@ -13,8 +13,11 @@ public struct CanvaClassifierView<
     
     @State private var suggestions: [Score<S.H>] = []
     private var viewForSuggestion: ((Score<S.H>) -> V)? = nil
+    
+    private let trainingSet: [S.H: [Strokes]]
 
     public init(
+        trainingSet: [S.H: [Strokes]],
         suggestionsModel: @escaping (MSAMediator) -> S,
         @ViewBuilder viewForSuggestion: @escaping (Score<S.H>) -> V
     ) {
@@ -23,6 +26,7 @@ public struct CanvaClassifierView<
         self._fragmentModel = StateObject(wrappedValue: DrawingFragmentModel(mediator: mediator))
         self._suggestionsModel = StateObject(wrappedValue: suggestionsModel(mediator))
         self.viewForSuggestion = viewForSuggestion
+        self.trainingSet = trainingSet
     }
     
     public var body: some View {
@@ -77,14 +81,12 @@ public struct CanvaClassifierView<
             self.suggestionsModel.setDelegate(SuggestionInteractionsManager(owner: self.suggestionsModel, mediator: self.mediator))
         }
         .task {
-            for symbol in alphabetTrainingSet.keys {
-                for strokes in alphabetTrainingSet[symbol]! {
-                    if let symbol = symbol as? S.H {
-                        self.suggestionsModel.addTrainingPoint(
-                            example: strokes,
-                            class: symbol
-                        )
-                    }
+            for symbol in self.trainingSet.keys {
+                for strokes in self.trainingSet[symbol]! {
+                    self.suggestionsModel.addTrainingPoint(
+                        example: strokes,
+                        class: symbol
+                    )
                 }
             }
         }

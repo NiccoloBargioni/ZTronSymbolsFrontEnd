@@ -4,7 +4,7 @@ import SwiftUI
 struct CanvaClassifierApp: App {
     var body: some Scene {
         WindowGroup {
-            CanvaClassifierView(trainingSet: alphabetTrainingSet) { mediator in
+            CanvaClassifierView(trainingSet: UppercaseAlphabetTraining.trainingData) { mediator in
                 return SuggestionsModel<Alphabet>(
                     mediator: mediator,
                     autoAssignToMostLikely: true,

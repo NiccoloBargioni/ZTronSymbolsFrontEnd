@@ -41,7 +41,7 @@ public struct DrawingFragment: View {
                                 for point in stroke {
                                     print("(x: \(point.x), y: \(point.y)),")
                                 }
-                                print("]")
+                                print("],")
                             }
                         }
                     }

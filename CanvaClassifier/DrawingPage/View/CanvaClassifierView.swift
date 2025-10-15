@@ -14,6 +14,7 @@ public struct CanvaClassifierView<
     @State private var suggestions: [Score<S.H>] = []
     private var viewForSuggestion: ((Score<S.H>) -> V)? = nil
     private var onSuggestionAcceptedAction: ((Score<S.H>) -> Void)? = nil
+    private var limitSuggestions: Int? = nil
     
     private let trainingSet: [S.H: [Strokes]]
     private var shouldClearOnSuggestionAccepted: Bool = false
@@ -39,30 +40,33 @@ public struct CanvaClassifierView<
                 suggestionsModel: self.suggestionsModel
             )
             .overlay(alignment: .bottom) {
-                HStack(alignment: .center, spacing: 18) {
-                    
-                    if self.suggestionsModel.getSuggestions().count > 0 {
-                        ForEach(
-                            self.suggestions, id: \.self
-                        ) { suggestion in
-                            Button {
-                                self.onSuggestionAcceptedAction?(suggestion)
-                                
-                                if self.shouldClearOnSuggestionAccepted {
-                                    self.pageModel.sendClear()
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(alignment: .center, spacing: 18) {
+                        if self.suggestionsModel.getSuggestions().count > 0 {
+                            ForEach(
+                                self.suggestions
+                                    .prefix(max(0, min(self.suggestions.count, self.limitSuggestions ?? self.suggestions.count))),
+                                id: \.self
+                            ) { suggestion in
+                                Button {
+                                    self.onSuggestionAcceptedAction?(suggestion)
+                                    
+                                    if self.shouldClearOnSuggestionAccepted {
+                                        self.pageModel.sendClear()
+                                    }
+                                } label: {
+                                    if let viewForSuggestion = viewForSuggestion {
+                                        viewForSuggestion(suggestion)
+                                    } else {
+                                        Text("\(String(describing: suggestion.id))")
+                                    }
                                 }
-                            } label: {
-                                if let viewForSuggestion = viewForSuggestion {
-                                    viewForSuggestion(suggestion)
-                                } else {
-                                    Text("\(String(describing: suggestion.id))")
-                                }
+                                .tint(.primary)
                             }
-                            .tint(.primary)
                         }
                     }
+                    .frame(maxWidth: .infinity)
                 }
-                .frame(maxWidth: .infinity)
             }
             .onChange(of: self.suggestionsModel.getSuggestions()) { newSuggestionsSet in
                 self.suggestions = newSuggestionsSet
@@ -116,6 +120,12 @@ public struct CanvaClassifierView<
     public func clearOnSuggestionAccepted(_ shouldClear: Bool = true) -> Self {
         var copy = self
         copy.shouldClearOnSuggestionAccepted = shouldClear
+        return copy
+    }
+    
+    public func limitSuggestions(max: Int?) -> Self {
+        var copy = self
+        copy.limitSuggestions = max
         return copy
     }
 }

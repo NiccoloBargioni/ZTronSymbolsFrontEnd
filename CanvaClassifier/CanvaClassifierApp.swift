@@ -17,6 +17,7 @@ struct CanvaClassifierApp: App {
                 print("Accepted suggestion \(score)")
             }
             .clearOnSuggestionAccepted()
+            .limitSuggestions(max: 3)
         }
     }
 }

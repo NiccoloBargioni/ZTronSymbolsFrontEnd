@@ -19,6 +19,8 @@ public struct CanvaClassifierView<
     private let trainingSet: [S.H: [Strokes]]
     private var shouldClearOnSuggestionAccepted: Bool = false
 
+    private let precisions: [S.H: Double] = [:]
+    
     public init(
         trainingSet: [S.H: [Strokes]],
         suggestionsModel: @escaping (MSAMediator) -> S,
@@ -108,6 +110,8 @@ public struct CanvaClassifierView<
                     )
                 }
             }
+            
+            self.suggestionsModel.estimatePrecisions(trainingSet: self.trainingSet)
         }
     }
     
@@ -128,6 +132,8 @@ public struct CanvaClassifierView<
         copy.limitSuggestions = max
         return copy
     }
+    
+    
 }
 
 

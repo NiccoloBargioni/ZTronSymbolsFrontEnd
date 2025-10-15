@@ -8,18 +8,26 @@ public final class SuggestionsModel<H: Hashable>: ObservableObject, AnySuggestio
     private let classifier = Classifier<H>(samplelimit: Int.max - 1)
     @InteractionsManaging(setupOr: .ignore, detachOr: .ignore) private var delegate: (any MSAInteractionsManager)? = nil
     
+    @Published private var precisions: [H: Double] = [:]
+    
     private let shouldAutoassignToMostLikely: Bool
     private let timeBeforeAutoassign: DispatchTimeInterval
     private var autoassignWorkItem: DispatchWorkItem? = nil
     private var onSuggestionAcceptedAction: ((Score<H>) -> Void)? = nil
+    private let autoacceptMinPrecision: Double
+    private let autoacceptMinSeparation: Double
     
     public init(
         mediator: MSAMediator,
         autoAssignToMostLikely: Bool = false,
-        timeBeforeAutoassign: DispatchTimeInterval = .seconds(2)
+        timeBeforeAutoassign: DispatchTimeInterval = .seconds(2),
+        autoacceptMinPrecision: Double = 0.0,
+        autoAcceptMinSeparation: Double = 0.0
     ) {
         self.shouldAutoassignToMostLikely = autoAssignToMostLikely
         self.timeBeforeAutoassign = timeBeforeAutoassign
+        self.autoacceptMinPrecision = autoacceptMinPrecision
+        self.autoacceptMinSeparation = autoAcceptMinSeparation
         self.delegate = SuggestionInteractionsManager(owner: self, mediator: mediator)
     }
     
@@ -88,7 +96,21 @@ public final class SuggestionsModel<H: Hashable>: ObservableObject, AnySuggestio
         self.autoassignWorkItem?.cancel()
         
         self.autoassignWorkItem = DispatchWorkItem {
-            self.onSuggestionAcceptedAction?(mostLikelySymbol)
+            
+            if let precisionOfMostLikelySymbol = self.precisions[mostLikelySymbol.identifier] {
+                if precisionOfMostLikelySymbol >= self.autoacceptMinPrecision {
+                    if self.suggestions.count > 1 {
+
+                        if abs(self.suggestions[0].score - self.suggestions[1].score) >= self.autoacceptMinSeparation {
+                            self.onSuggestionAcceptedAction?(mostLikelySymbol)
+                        }
+                    } else {
+                        self.onSuggestionAcceptedAction?(mostLikelySymbol)
+                    }
+                }
+            } else {
+                self.onSuggestionAcceptedAction?(mostLikelySymbol)
+            }
         }
 
         DispatchQueue.main.asyncAfter(
@@ -101,4 +123,39 @@ public final class SuggestionsModel<H: Hashable>: ObservableObject, AnySuggestio
         self.onSuggestionAcceptedAction = action
     }
 
+    
+    public func estimatePrecisions(trainingSet: [H: [[Stroke]]]) {
+        var trainingSetOfSamples: [H: [StrokeSample]] = [:]
+
+        
+        for letter in trainingSet.keys {
+            if let examples = trainingSet[letter] {
+                trainingSetOfSamples[letter] = []
+                for example in examples {
+                    trainingSetOfSamples[letter]?.append(StrokeSample(strokes: example))
+                }
+            }
+        }
+
+        let classifierMetrics = self.classifier.kFoldCrossValidate(k: 10, from: trainingSetOfSamples)
+        
+        var updatedPrecisions: [H: Double] = [:]
+        
+        classifierMetrics.keys.forEach { symbol in
+            if let metricsForSymbol = classifierMetrics[symbol] {
+                updatedPrecisions[symbol] = metricsForSymbol.getMeanPrecision()
+            }
+        }
+        
+        updatedPrecisions.keys.forEach { symbol in
+            if let precisionForSymbol = updatedPrecisions[symbol] {
+                self.precisions[symbol] = precisionForSymbol
+            }
+        }
+    }
+
+    
+    public func getEstimatedPrecision(for symbol: H) -> Double? {
+        return self.precisions[symbol]
+    }
 }

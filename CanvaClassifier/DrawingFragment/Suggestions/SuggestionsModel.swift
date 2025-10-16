@@ -16,6 +16,7 @@ public final class SuggestionsModel<H: Hashable>: ObservableObject, AnySuggestio
     private var onSuggestionAcceptedAction: ((Score<H>) -> Void)? = nil
     private let autoacceptMinPrecision: Double
     private let autoacceptMinSeparation: Double
+    private var onDisambiguationNeededAction: (([Score<H>]) -> Void)?
     
     public init(
         mediator: MSAMediator,
@@ -103,6 +104,8 @@ public final class SuggestionsModel<H: Hashable>: ObservableObject, AnySuggestio
 
                         if abs(self.suggestions[0].score - self.suggestions[1].score) >= self.autoacceptMinSeparation {
                             self.onSuggestionAcceptedAction?(mostLikelySymbol)
+                        } else {
+                            self.onDisambiguationNeededAction?(Array(self.suggestions.prefix(2)))
                         }
                     } else {
                         self.onSuggestionAcceptedAction?(mostLikelySymbol)
@@ -157,5 +160,9 @@ public final class SuggestionsModel<H: Hashable>: ObservableObject, AnySuggestio
     
     public func getEstimatedPrecision(for symbol: H) -> Double? {
         return self.precisions[symbol]
+    }
+    
+    public func onDisambiguationNeeded(_ action: @escaping ([Score<H>]) -> Void) {
+        self.onDisambiguationNeededAction = action
     }
 }

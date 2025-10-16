@@ -1,6 +1,7 @@
 import SwiftUI
 import ZTronObservation
 import ZTronSymbolsClassifier
+import Combine
 
 public struct CanvaClassifierView<
     S: AnySuggestionModel & ObservableObject,
@@ -20,6 +21,11 @@ public struct CanvaClassifierView<
     private var shouldClearOnSuggestionAccepted: Bool = false
 
     private let precisions: [S.H: Double] = [:]
+    
+    @State private var suggestionsThatNeedDisambiguation: [Score<S.H>] = .init()
+    @State private var showDisambiguationToast: Bool = false
+    
+    @State internal var sendClearPublisher: PassthroughSubject<Void, Never> = .init()
     
     public init(
         trainingSet: [S.H: [Strokes]],
@@ -52,10 +58,6 @@ public struct CanvaClassifierView<
                             ) { suggestion in
                                 Button {
                                     self.onSuggestionAcceptedAction?(suggestion)
-                                    
-                                    if self.shouldClearOnSuggestionAccepted {
-                                        self.pageModel.sendClear()
-                                    }
                                 } label: {
                                     if let viewForSuggestion = viewForSuggestion {
                                         viewForSuggestion(suggestion)
@@ -100,6 +102,10 @@ public struct CanvaClassifierView<
             self.suggestionsModel.onSuggestionAccepted { score in
                 self.onSuggestionAcceptedAction?(score)
             }
+            
+            self.suggestionsModel.onDisambiguationNeeded { ambiguousSet in
+                self.suggestionsThatNeedDisambiguation = ambiguousSet
+            }
         }
         .task {
             for symbol in self.trainingSet.keys {
@@ -113,11 +119,41 @@ public struct CanvaClassifierView<
             
             self.suggestionsModel.estimatePrecisions(trainingSet: self.trainingSet)
         }
+        .onChange(of: self.suggestionsThatNeedDisambiguation) { newSet in
+            if newSet.count > 0 {
+                let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+                feedbackGenerator.prepare()
+                feedbackGenerator.impactOccurred()
+
+                DispatchQueue.main.async {
+                    self.showDisambiguationToast = true
+                }
+            }
+        }
+        .confirmationDialog(
+            "Select suggestion that best fits",
+            isPresented: self.$showDisambiguationToast
+        ) {
+            ForEach(self.suggestionsThatNeedDisambiguation, id: \.identifier) { suggestion in
+                Button("\(suggestion.identifier)") {
+                    self.onSuggestionAcceptedAction?(suggestion)
+                }
+            }
+        }
+        .onReceive(self.sendClearPublisher.receive(on: RunLoop.main)) { _ in
+            self.pageModel.sendClear()
+        }
     }
     
     public func onSuggestionAccepted(_ action: @escaping (Score<S.H>) -> Void) -> Self {
         var copy = self
-        copy.onSuggestionAcceptedAction = action
+        copy.onSuggestionAcceptedAction = { (score: Score<S.H>) in 
+            if self.shouldClearOnSuggestionAccepted {
+                self.sendClearPublisher.send()
+            }
+            
+            action(score)
+        }
         return copy
     }
     
@@ -132,7 +168,6 @@ public struct CanvaClassifierView<
         copy.limitSuggestions = max
         return copy
     }
-    
     
 }
 

@@ -13,4 +13,5 @@ public protocol AnySuggestionModel: Component {
     func onSuggestionAccepted(_:((Score<H>) -> Void)?)
 
     func getEstimatedPrecision(for symbol: H) -> Double?
+    func onDisambiguationNeeded(_: @escaping ([Score<H>]) -> Void)
 }

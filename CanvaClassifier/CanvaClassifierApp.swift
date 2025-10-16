@@ -9,17 +9,18 @@ struct CanvaClassifierApp: App {
                     mediator: mediator,
                     autoAssignToMostLikely: true,
                     timeBeforeAutoassign: .milliseconds(750),
-                    autoacceptMinPrecision: 0.69,
-                    autoAcceptMinSeparation: 0.02
+                    autoacceptMinPrecision: 0.4,
+                    autoAcceptMinSeparation: 0.05
                 )
             } viewForSuggestion: { score in
                 Text("\(score.identifier.rawValue)")
-                    .layoutPriority(1)
+                    .font(.largeTitle.weight(.black))
+                    .frame(width: 44.0, height: 44.0)
             }
+            .clearOnSuggestionAccepted()
             .onSuggestionAccepted { score in
                 print("Accepted suggestion \(score)")
             }
-            .clearOnSuggestionAccepted()
             .limitSuggestions(max: 3)
         }
     }

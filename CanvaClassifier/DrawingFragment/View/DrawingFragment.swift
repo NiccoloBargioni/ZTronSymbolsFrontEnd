@@ -1,7 +1,5 @@
 import Autograph
 import SwiftUI
-import SVGView
-import SwiftUIIntrospect
 
 public struct DrawingFragment: View {
     @ObservedObject private var fragmentModel: DrawingFragmentModel

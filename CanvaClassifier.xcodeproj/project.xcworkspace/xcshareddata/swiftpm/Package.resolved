@@ -1,15 +1,6 @@
 {
-  "originHash" : "f5ff642ac2d0f28482a1a84d47d5576296a4e72b8f0f208f83e1c55f0827f192",
+  "originHash" : "48f7d8ab3fbf7fcceb827ed7bff62c9e2abe5d3fef3b19c5d5c2bedc9af0e725",
   "pins" : [
-    {
-      "identity" : "svgview",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/exyte/SVGView",
-      "state" : {
-        "branch" : "main",
-        "revision" : "86f6d742cccf5b64844b303d80ed1f75d02fbcce"
-      }
-    },
     {
       "identity" : "swift-ui-autograph",
       "kind" : "remoteSourceControl",
@@ -34,16 +25,7 @@
       "location" : "https://github.com/NickTheFreak97/SwiftGraph",
       "state" : {
         "branch" : "msa",
-        "revision" : "615085465d81f7a7ff176f13029b19f873773409"
-      }
-    },
-    {
-      "identity" : "swiftui-introspect",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/siteline/swiftui-introspect",
-      "state" : {
-        "branch" : "main",
-        "revision" : "807f73ce09a9b9723f12385e592b4e0aaebd3336"
+        "revision" : "b239f9e24d5ab74108613cd1350cdd09262bbbd5"
       }
     },
     {
@@ -52,7 +34,7 @@
       "location" : "https://github.com/NiccoloBargioni/ZTronObservation",
       "state" : {
         "branch" : "main",
-        "revision" : "9c7567739bb8979b73e0d9416e30fd5f88e0450b"
+        "revision" : "b7ebd46ae6207b64842712cad6ff08c00aaab6df"
       }
     },
     {
@@ -61,7 +43,7 @@
       "location" : "https://github.com/NiccoloBargioni/ZTronSymbolsClassifer",
       "state" : {
         "branch" : "main",
-        "revision" : "4d8257adc9ead0c5c99da5f5abf7847c477e3942"
+        "revision" : "d690f4369b58b81285b2f985c4bb640ad9384a89"
       }
     }
   ],

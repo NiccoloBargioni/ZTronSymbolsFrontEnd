@@ -8,7 +8,7 @@ struct CanvaClassifierApp: App {
                 return SuggestionsModel<Alphabet>(
                     mediator: mediator,
                     autoAssignToMostLikely: true,
-                    timeBeforeAutoassign: .milliseconds(750),
+                    timeBeforeAutoassign: .milliseconds(500),
                     autoacceptMinPrecision: 0.4,
                     autoAcceptMinSeparation: 0.05
                 )
